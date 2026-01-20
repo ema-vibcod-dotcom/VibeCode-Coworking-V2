@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Administración de Reservas</h2>
+
+<form method="GET" class="filters">
+    <div class="form-group">
+        <label>Usuario</label>
+        <select name="user_id">
+            <option value="">Todos</option>
+            {% for user in users %}
+            <option value="{{ user.id }}" {% if request.args.get('user_id')|int==user.id %}selected{% endif %}>
+                {{ user.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div style="flex: 0 0 100px; padding-top: 24px;">
+        <button type="submit" class="btn">Filtrar</button>
+    </div>
+</form>
+
+{% if reservas %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Espacio</th>
+            <th>Fecha</th>
+            <th>Horario</th>
+            <th>Estado</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reserva in reservas %}
+        <tr>
+            <td>{{ reserva.id }}</td>
+            <td>{{ reserva.usuario.nombre if reserva.usuario else 'N/A' }}</td>
+            <td>{{ reserva.espacio.nombre if reserva.espacio else 'N/A' }}</td>
+            <td>{{ reserva.fecha }}</td>
+            <td>{{ reserva.hora_inicio.strftime('%H:%M') if reserva.hora_inicio else '--' }} - {{
+                reserva.hora_fin.strftime('%H:%M') if reserva.hora_fin else '--' }}</td>
+            <td
+                class="status-{{ reserva.estado if reserva.estado in ['activa', 'cancelada', 'finalizada'] else 'default' }}">
+                {{ (reserva.estado or 'N/A')|upper }}
+            </td>
+            <td>
+                {% if reserva.estado == 'activa' %}
+                <form action="{{ url_for('admin.cancelar_reserva') }}" method="POST"
+                    style="border: none; padding: 0; background: none;">
+                    <input type="hidden" name="reserva_id" value="{{ reserva.id }}">
+                    <button type="submit" class="btn"
+                        style="background-color: #dc3545; padding: 5px 10px; font-size: 0.9rem;">Cancelar</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div style="text-align: center; padding: 40px; background: #f9f9f9; border-radius: 8px; margin-top: 20px;">
+    <p style="font-size: 1.2rem; color: #666;">Aún no se han hecho reservas</p>
+</div>
+{% endif %}
+{% endblock %}

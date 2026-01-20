@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Admin Login</h2>
+<form method="POST">
+    <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" name="nombre" required>
+    </div>
+    <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" name="password" required>
+    </div>
+    <button type="submit" class="btn">Ingresar</button>
+    <p style="margin-top: 10px; text-align: center;">
+        <a href="{{ url_for('admin.registro_inicial') }}">Registro Inicial (Solo si no existe admin)</a>
+    </p>
+</form>
+{% endblock %}

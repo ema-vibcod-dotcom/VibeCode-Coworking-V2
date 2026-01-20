@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div style="margin-bottom: 20px;">
+    <h3>Crear Nuevo Usuario</h3>
+    <form method="POST">
+        <div class="form-group">
+            <label>Nombre de Usuario</label>
+            <input type="text" name="nombre" required>
+        </div>
+        <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" name="password" required>
+        </div>
+        <button type="submit" class="btn">Crear Usuario</button>
+    </form>
+</div>
+
+<h3>Lista de Usuarios</h3>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Estado Actual</th>
+            <th>Fecha Creación</th>
+            <th>Activo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.nombre }}</td>
+            <td class="{{ 'status-dentro' if user.estado_actual == 'dentro' else 'status-fuera' }}">
+                {{ user.estado_actual|upper }}
+            </td>
+            <td>{{ user.fecha_creación.strftime('%Y-%m-%d') }}</td>
+            <td>{{ 'Sí' if user.activo else 'No' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

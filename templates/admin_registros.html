@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Registros de Acceso</h2>
+
+<form method="GET" class="filters">
+    <div class="form-group">
+        <label>Usuario</label>
+        <select name="user_id">
+            <option value="">Todos</option>
+            {% for user in users %}
+            <option value="{{ user.id }}" {% if request.args.get('user_id')|int==user.id %}selected{% endif %}>
+                {{ user.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Desde</label>
+        <input type="date" name="start_date" value="{{ request.args.get('start_date') }}">
+    </div>
+    <div class="form-group">
+        <label>Hasta</label>
+        <input type="date" name="end_date" value="{{ request.args.get('end_date') }}">
+    </div>
+    <div class="form-group">
+        <label>Estado</label>
+        <select name="status">
+            <option value="">Todos</option>
+            <option value="abierto" {% if request.args.get('status')=='abierto' %}selected{% endif %}>Abierto</option>
+            <option value="cerrado" {% if request.args.get('status')=='cerrado' %}selected{% endif %}>Cerrado</option>
+        </select>
+    </div>
+    <div style="flex: 0 0 100px; padding-top: 24px;">
+        <button type="submit" class="btn">Filtrar</button>
+    </div>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Fecha</th>
+            <th>Hora Ingreso</th>
+            <th>Hora Salida</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.id }}</td>
+            <td>{{ log.usuario.nombre if log.usuario else 'Usuario N/A' }}</td>
+            <td>{{ log.fecha or 'N/A' }}</td>
+            <td>{{ log.hora_ingreso.strftime('%H:%M:%S') if log.hora_ingreso else '--:--:--' }}</td>
+            <td>{{ log.hora_salida.strftime('%H:%M:%S') if log.hora_salida else '-' }}</td>
+            <td class="{{ 'status-dentro' if log.estado == 'abierto' else 'status-fuera' }}">
+                {{ (log.estado or 'N/A')|upper }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
